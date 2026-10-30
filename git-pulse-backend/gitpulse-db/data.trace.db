@@ -1,0 +1,35 @@
+2026-10-24 15:51:49.019016+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "REPO_LOOKUPS" not found (this database is empty); SQL statement:
+    INSERT INTO repo_lookups (owner, repo, last_accessed)
+    VALUES (?, ?, ?)
+    ON CONFLICT (owner, repo)
+    DO UPDATE SET last_accessed = EXCLUDED.last_accessed
+ [42104-224]
+2026-10-24 15:52:45.810121+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "REPO_LOOKUPS" not found (this database is empty); SQL statement:
+    INSERT INTO repo_lookups (owner, repo, last_accessed)
+    VALUES (?, ?, ?)
+    ON CONFLICT (owner, repo)
+    DO UPDATE SET last_accessed = EXCLUDED.last_accessed
+ [42104-224]
+2026-10-24 15:52:45.810163+01:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "REPO_LOOKUPS" not found (this database is empty); SQL statement:
+    INSERT INTO repo_lookups (owner, repo, last_accessed)
+    VALUES (?, ?, ?)
+    ON CONFLICT (owner, repo)
+    DO UPDATE SET last_accessed = EXCLUDED.last_accessed
+ [42104-224]
+2026-10-24 15:56:11.299972+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "    INSERT INTO repo_lookups (owner, repo, last_accessed)\000a    VALUES (?, ?, ?)\000a    [*]ON CONFLICT (owner, repo)\000a    DO UPDATE SET last_accessed = EXCLUDED.last_accessed\000a"; SQL statement:
+    INSERT INTO repo_lookups (owner, repo, last_accessed)
+    VALUES (?, ?, ?)
+    ON CONFLICT (owner, repo)
+    DO UPDATE SET last_accessed = EXCLUDED.last_accessed
+ [42000-224]
+2026-10-24 15:56:11.300108+01:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "    INSERT INTO repo_lookups (owner, repo, last_accessed)\000a    VALUES (?, ?, ?)\000a    [*]ON CONFLICT (owner, repo)\000a    DO UPDATE SET last_accessed = EXCLUDED.last_accessed\000a"; SQL statement:
+    INSERT INTO repo_lookups (owner, repo, last_accessed)
+    VALUES (?, ?, ?)
+    ON CONFLICT (owner, repo)
+    DO UPDATE SET last_accessed = EXCLUDED.last_accessed
+ [42000-224]

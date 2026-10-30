@@ -1,0 +1,17 @@
+com/gitpulse/domain/Records$BranchHealthDto.class
+com/gitpulse/client/GitHubRestClient.class
+com/gitpulse/domain/Records.class
+com/gitpulse/resource/MetricsResource.class
+com/gitpulse/domain/Records$GitHubUser.class
+com/gitpulse/domain/Records$GitHubPr.class
+com/gitpulse/domain/Records$GitHubHead.class
+com/gitpulse/domain/Records$StuckPrDto.class
+com/gitpulse/dao/TrackedRepositoryDao.class
+com/gitpulse/domain/Records$GitHubCommitDetails.class
+com/gitpulse/domain/Records$GitHubCommitObject.class
+com/gitpulse/domain/Records$GitHubCommitDetailsContainer.class
+com/gitpulse/domain/Records$RepoMetricsDto.class
+com/gitpulse/domain/Records$GitHubBranch.class
+com/gitpulse/domain/Records$BranchDto.class
+com/gitpulse/domain/Records$GitHubReview.class
+com/gitpulse/service/MetricsService.class
