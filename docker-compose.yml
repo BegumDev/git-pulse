@@ -1,15 +1,17 @@
-version: '3.8'
-
 services:
   backend:
-    build: ./git-pulse-backend
+    build:
+      context: ./git-pulse-backend
+    image: git-pulse-backend:latest
     ports:
       - "8080:8080"
     environment:
       - GITHUB_TOKEN=${GITHUB_TOKEN}
 
   frontend:
-    build: ./git-pulse-ui
+    build:
+      context: ./git-pulse-ui
+    image: git-pulse-frontend:latest
     ports:
       - "8000:80"
     depends_on:
