@@ -4,12 +4,12 @@ WORKDIR /app
 COPY pom.xml .
 RUN mvn dependency:go-offline -B
 
-# Stage 2: Run unit tests (used by CI Test stage)
+# Stage 2: Run unit tests (downloads any remaining test-scoped plugins/JARs)
 FROM deps AS test
 COPY src ./src
-RUN mvn test -B -o
+RUN mvn test -B
 
-# Stage 3: Build uber-jar (reuses the already-tested layer)
+# Stage 3: Build uber-jar (all compile + test deps are now cached, so -o works cleanly)
 FROM test AS build
 RUN mvn package -Dquarkus.package.type=uber-jar -DskipTests -o
 
