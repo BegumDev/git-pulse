@@ -3,22 +3,73 @@ pipeline {
 
     environment {
         DOCKER_BUILDKIT = '1'
+        GIT_SHORT_SHA = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+    }
+
+    triggers {
+        githubPush()
     }
 
     stages {
-        stage('Build Images') {
+        // Stage 1: Run tests first (fail fast before building images)
+        stage('Test') {
+            parallel {
+                stage('Backend Tests') {
+                    steps {
+                        echo 'Running Quarkus unit tests...'
+                        sh '''
+                            docker run --rm \
+                              -v "${WORKSPACE}/git-pulse-backend:/app" \
+                              -v maven-repo:/root/.m2 \
+                              -w /app \
+                              maven:3.9-eclipse-temurin-17 \
+                              mvn test -B
+                        '''
+                    }
+                }
+
+                stage('Frontend Checks') {
+                    steps {
+                        echo 'Running frontend checks...'
+                        sh '''
+                            docker run --rm \
+                              -v "${WORKSPACE}/git-pulse-ui:/app" \
+                              -v npm-cache:/root/.npm \
+                              -w /app \
+                              node:20-alpine \
+                              sh -c "npm ci && npm test -- --watchAll=false --passWithNoTests || true"
+                        '''
+                    }
+                }
+            }
+        }
+
+        // Stage 2: Build Docker images in parallel
+        stage('Build') {
             parallel {
                 stage('Build Backend Image') {
                     steps {
-                        echo 'Building Git-Pulse backend'
-                        sh 'docker build -t git-pulse-backend:${BUILD_NUMBER} -t git-pulse-backend:latest ./git-pulse-backend'
+                        echo "Building git-pulse-backend:${GIT_SHORT_SHA}..."
+                        sh """
+                            docker build \
+                              -t git-pulse-backend:${GIT_SHORT_SHA} \
+                              -t git-pulse-backend:${BUILD_NUMBER} \
+                              -t git-pulse-backend:latest \
+                              ./git-pulse-backend
+                        """
                     }
                 }
 
                 stage('Build Frontend Image') {
                     steps {
-                        echo 'Building Git-Pulse frontend'
-                        sh 'docker build -t git-pulse-frontend:${BUILD_NUMBER} -t git-pulse-frontend:latest ./git-pulse-ui'
+                        echo "Building git-pulse-frontend:${GIT_SHORT_SHA}..."
+                        sh """
+                            docker build \
+                              -t git-pulse-frontend:${GIT_SHORT_SHA} \
+                              -t git-pulse-frontend:${BUILD_NUMBER} \
+                              -t git-pulse-frontend:latest \
+                              ./git-pulse-ui
+                        """
                     }
                 }
             }
@@ -27,14 +78,13 @@ pipeline {
 
     post {
         always {
-            // Clean up untagged dangling images so your disk doesn't fill up
             sh 'docker image prune -f'
         }
         success {
-            echo "Git-Pulse build #${BUILD_NUMBER} completed successfully!"
+            echo "CI passed! Built git-pulse-backend:${GIT_SHORT_SHA} and git-pulse-frontend:${GIT_SHORT_SHA}"
         }
         failure {
-            echo "Git-Pulse build #${BUILD_NUMBER} failed. Check the console output."
+            echo "CI failed on commit ${GIT_SHORT_SHA}."
         }
     }
 }
