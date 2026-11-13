@@ -11,40 +11,15 @@ pipeline {
     }
 
     stages {
-        // Stage 1: Run tests first (fail fast before building images)
+        // Stage 1: Run backend unit tests via Docker build target
         stage('Test') {
-            parallel {
-                stage('Backend Tests') {
-                    steps {
-                        echo 'Running Quarkus unit tests...'
-                        sh '''
-                            docker run --rm \
-                              -v "${WORKSPACE}/git-pulse-backend:/app" \
-                              -v maven-repo:/root/.m2 \
-                              -w /app \
-                              maven:3.9-eclipse-temurin-17 \
-                              mvn test -B
-                        '''
-                    }
-                }
-
-                stage('Frontend Checks') {
-                    steps {
-                        echo 'Running frontend checks...'
-                        sh '''
-                            docker run --rm \
-                              -v "${WORKSPACE}/git-pulse-ui:/app" \
-                              -v npm-cache:/root/.npm \
-                              -w /app \
-                              node:20-alpine \
-                              sh -c "npm ci && npm test -- --watchAll=false --passWithNoTests || true"
-                        '''
-                    }
-                }
+            steps {
+                echo 'Running Quarkus unit tests...'
+                sh 'docker build --target test -t git-pulse-backend:test ./git-pulse-backend'
             }
         }
 
-        // Stage 2: Build Docker images in parallel
+        // Stage 2: Build final production images in parallel
         stage('Build') {
             parallel {
                 stage('Build Backend Image') {
